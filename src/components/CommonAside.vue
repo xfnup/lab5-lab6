@@ -20,6 +20,10 @@
         <el-icon><location /></el-icon>
         <template #title>供应商</template>
       </el-menu-item>
+      <el-menu-item @click="gotoAccess">
+        <el-icon><location /></el-icon>
+        <template #title>进货</template>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -54,11 +58,17 @@ export default {
         name: 'Merchant',
       });
     };
+    const gotoAccess = () => {
+      router.push({
+        name: 'Access',
+      });
+    };
     return{
       gotoMain,
       gotoStorage,
       gotoCustomer,
-      gotoMerchant
+      gotoMerchant,
+      gotoAccess
     }
   }
 }

@@ -1,4 +1,9 @@
 <template>
+  <el-container>
+  <el-aside width="200px">
+    <common-aside></common-aside>
+  </el-aside>
+  <el-main>
   <el-header height="auto" width="auto">
     <el-button type="primary" @click="selectGoos">显示所有商品</el-button>
   </el-header>
@@ -7,7 +12,7 @@
               v-model="Goodsname"
               placeholder="商品名称"
               clearable
-              style="width: 1000px"
+              style="width: 800px"
     />
     <el-button type="primary" @click="addGoods">添加</el-button>
   <el-table :data="results" style="width: fit-content">
@@ -22,12 +27,18 @@
     </el-table-column>
   </el-table>
   </el-main>
+  </el-main>
+  </el-container>
 </template>
 
 <script>
 import {getRequest,postRequest} from "@/tool/api";
+import CommonAside from "@/components/CommonAside";
 export default {
   name: "Main",
+  components:{
+    CommonAside
+  },
   data (){
     return{
       Goodsname: '',

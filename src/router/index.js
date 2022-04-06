@@ -4,6 +4,7 @@ import MyMain from "@/views/MyMain";
 import Storage from "@/views/Storage";
 import Customer from "@/views/Customer";
 import Merchant from "@/views/Merchant";
+import Access from "@/views/Access";
 
 const routes = [
     {
@@ -25,6 +26,11 @@ const routes = [
         path:"/Merchant",
         name:"Merchant",
         component: Merchant
+    },
+    {
+        path:"/Access",
+        name:"Access",
+        component: Access
     },
     {
         path: "/",

@@ -1,4 +1,9 @@
 <template>
+  <el-container>
+  <el-aside width="200px">
+    <common-aside></common-aside>
+  </el-aside>
+  <el-main>
   <el-header height="auto" width="auto">
     <el-button type="primary" @click="selectStorage">显示所有仓库</el-button>
   </el-header>
@@ -29,12 +34,18 @@
       </el-table-column>
     </el-table>
   </el-main>
+  </el-main>
+  </el-container>
 </template>
 
 <script>
 import {getRequest,postRequest} from "@/tool/api";
+import CommonAside from "@/components/CommonAside";
 export default {
   name: "Storage",
+  components:{
+    CommonAside
+  },
   data (){
     return{
       Storagename: '',

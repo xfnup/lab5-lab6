@@ -27,7 +27,7 @@ axios.interceptors.response.use(response=> {
             return Promise.resolve(response);
         }
         ElMessage({
-            message: response.data.message,
+            message: response.data.message+'成功',
             type: 'warning',
         })
     }else {
@@ -35,7 +35,7 @@ axios.interceptors.response.use(response=> {
     }
 },error => {
     ElMessage({
-        message: error.message,
+        message: error.message+'完整性约束错误',
         type: 'error',
     })
 })
