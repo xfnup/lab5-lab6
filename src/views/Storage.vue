@@ -1,4 +1,15 @@
 <template>
+  <el-dialog v-model="dialogTableVisible" title="库存明细">
+    <el-table :data="stock">
+      <el-table-column property="g_name" label="商品名" width="200" />
+      <el-table-column property="s_num" label="商品数量" />
+      <el-table-column label="操作" width="100">
+        <template #default="scope">
+          <el-button type="primary" @click="deletestock(scope.row.s_id,scope.row.g_id)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-dialog>
   <el-container>
   <el-aside width="200px">
     <common-aside></common-aside>
@@ -27,9 +38,10 @@
       </el-table-column>
       <el-table-column label="地址" width="300" prop="s_address">
       </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="200">
         <template #default="scope">
           <el-button type="primary" @click="deleteStorage(scope.row.s_id)">删除</el-button>
+          <el-button type="primary" @click="selectstock(scope.row.s_id)">库存明细</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -41,6 +53,7 @@
 <script>
 import {getRequest,postRequest} from "@/tool/api";
 import CommonAside from "@/components/CommonAside";
+import {ElMessage} from "element-plus";
 export default {
   name: "Storage",
   components:{
@@ -48,8 +61,17 @@ export default {
   },
   data (){
     return{
+      dialogTableVisible:false,
       Storagename: '',
       Storageaddress:'',
+      stock:[
+        {
+          s_id:0,
+          g_id:0,
+          g_name:'可乐',
+          s_num:10
+        }
+      ],
       results: [
         {
           s_id: 2,
@@ -65,6 +87,29 @@ export default {
     }
   },
   methods: {
+    selectstock:function (s_id) {
+      var Stock={
+        s_id:s_id,
+      }
+      getRequest("Stock/detail",Stock).then(res =>{
+        this.stock=res.data;
+      })
+      this.dialogTableVisible=true;
+    },
+    deletestock:function (s_id,g_id) {
+      var Stock={
+        s_id:s_id,
+        g_id:g_id,
+        s_num:0,
+      }
+      postRequest("Stock/delete",Stock).then(res =>{
+        console.log(res.message);
+        ElMessage({
+          message:res.status+'删除成功',
+          type: 'success',
+        })
+      })
+    },
     selectStorage:function (){
       getRequest("/Storage/select").then(res => {
         console.log(res.data);

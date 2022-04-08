@@ -5,6 +5,7 @@ import Storage from "@/views/Storage";
 import Customer from "@/views/Customer";
 import Merchant from "@/views/Merchant";
 import Access from "@/views/Access";
+import Output from "@/views/Output";
 
 const routes = [
     {
@@ -31,6 +32,11 @@ const routes = [
         path:"/Access",
         name:"Access",
         component: Access
+    },
+    {
+        path: "/Output",
+        name:"Output",
+        component: Output
     },
     {
         path: "/",
