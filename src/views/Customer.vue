@@ -99,6 +99,9 @@ export default {
         })
       }
     }
+  },
+  created() {
+    this.selectCustomer();
   }
 }
 </script>

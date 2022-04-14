@@ -88,6 +88,9 @@ export default {
         })
       }
     }
+  },
+  created() {
+    this.selectGoos();
   }
 }
 </script>

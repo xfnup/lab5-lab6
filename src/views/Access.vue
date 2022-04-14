@@ -10,7 +10,7 @@
               clearable
               style="width: 300px"
     />
-    <el-button type="primary" @click="addaccessunit(recoderow)">添加商品</el-button>
+    <el-button type="primary" @click="addaccessunit(recoderow,recoderowsid)">添加商品</el-button>
     <el-table :data="accessunitlist">
       <el-table-column property="g_name" label="商品名" width="200" />
       <el-table-column property="au_num" label="商品数量" />
@@ -48,7 +48,7 @@
           </el-table-column>
           <el-table-column label="操作" width="100">
             <template #default="scope">
-              <el-button type="primary" @click="getaccessunit(scope.row.a_id)">进货明细</el-button>
+              <el-button type="primary" @click="getaccessunit(scope.row.a_id,scope.row.s_id)">进货明细</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -75,6 +75,7 @@ export default {
       goodsid:0,
       goodsnum:0,
       recoderow:0,
+      recoderowsid:0,
       merchantlist:[
         {
           m_id:1,
@@ -120,11 +121,13 @@ export default {
       results: [
         // {
         //   a_id:2,
+        //   s_id:2,
         //   m_name:'供应商A',
         //   s_name:'北京一号仓'
         // },
         // {
         //   a_id:3,
+        //   s_id:2,
         //   m_name: '供应商B',
         //   s_name: '北京二号仓'
         // }
@@ -174,8 +177,9 @@ export default {
         })
       }
     },
-    getaccessunit:function (a_id) {
+    getaccessunit:function (a_id,s_id) {
       this.recoderow=a_id;
+      this.recoderowsid=s_id;
       var Access = {
         a_id: a_id,
         m_id: this.merchantid,
@@ -186,7 +190,7 @@ export default {
       })
       this.dialogTableVisible=true;
     },
-    addaccessunit:function (a_id){
+    addaccessunit:function (a_id,s_id){
       if (this.goodsnum<=0)
       {
         ElMessage({
@@ -198,6 +202,7 @@ export default {
       {
         var Accessunit = {
           a_id:a_id,
+          s_id:s_id,
           au_seq:0,
           g_id:this.goodsid,
           au_num:this.goodsnum,
