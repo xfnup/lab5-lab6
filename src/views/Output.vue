@@ -1,24 +1,28 @@
 <template>
   <el-dialog v-model="dialogTableVisible" title="销售明细" >
-    <el-select v-model="goodsid" placeholder="选择商品" style="width: 150px">
+<!--    <el-select v-model="goodsid" placeholder="选择商品" style="width: 150px">
       <el-option v-for="(item,index) in goodslist" :key="index" :label="item.g_name" :value="item.g_id">
       </el-option>
-    </el-select>
-    <el-select v-model="storageid" placeholder="选择仓库" style="width: 150px">
-      <el-option v-for="(item,index) in storagelist" :key="index" :label="item.s_name" :value="item.s_id">
+    </el-select>-->
+    <el-select v-model="stocklistindex" placeholder="选择库存" style="width: 400px">
+      <el-option v-for="(item,index) in stocklist" :key="index" :label="'仓库:'+item.s_name+'  商品:'+item.g_name+'  数量:'+item.s_num" :value="index">
       </el-option>
     </el-select>
+<!--    <el-select v-model="storageid" placeholder="选择仓库" style="width: 150px">
+      <el-option v-for="(item,index) in storagelist" :key="index" :label="item.s_name" :value="item.s_id">
+      </el-option>
+    </el-select>-->
     <el-input type="text"
               v-model="goodsnum"
               placeholder="商品数量"
               clearable
-              style="width: 150px"
+              style="width: 100px"
     />
     <el-input type="text"
               v-model="goodsprice"
               placeholder="商品单价"
               clearable
-              style="width: 150px"
+              style="width: 100px"
     />
     <el-button type="primary" @click="addoutputunit(recoderow)">添加商品</el-button>
     <el-table :data="outputunitlist">
@@ -28,7 +32,7 @@
       <el-table-column property="ou_price" label="总价" />
       <el-table-column label="操作" width="100">
         <template #default="scope">
-          <el-button type="primary" @click="deleteoutputunit(scope.row.ou_seq)">删除</el-button>
+          <el-button type="primary" @click="deleteoutputunit(scope.row.ou_seq,scope.row.s_id,scope.row.g_id,scope.row.ou_num)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -52,9 +56,10 @@
           </el-table-column>
           <el-table-column label="客户名称" width="300" prop="c_name">
           </el-table-column>
-          <el-table-column label="操作" width="100">
+          <el-table-column label="操作" width="200">
             <template #default="scope">
               <el-button type="primary" @click="getoutputunit(scope.row.o_id)">销售明细</el-button>
+              <el-button type="primary" @click="deleteoutput(scope.row.o_id)">退货</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -76,18 +81,17 @@ export default {
   data (){
     return{
       dialogTableVisible:false,
+      stocklistindex:0,
       customerid:0,
-      goodsid:0,
       goodsnum:0,
       goodsprice:0,
-      storageid:0,
       recoderow:0,
-      storagelist:[
+      /*storagelist:[
         {
           s_id:1,
           s_name:'北京一号'
         }
-      ],
+      ],*/
       customerlist:[
         {
           c_id: 2,
@@ -106,35 +110,48 @@ export default {
           ou_num:10,
         },
       ],
-      goodslist:[
+      /*goodslist:[
         {
           g_id:0,
           g_name:'可乐'
         }
-      ],
+      ],*/
       results: [
-
+      ],
+      stocklist:[
+        {
+          g_id:0,
+          g_name:'可乐',
+          s_id:0,
+          s_name:'北京一号',
+          s_num:0
+        }
       ]
     }
   },
   methods:{
-    selectGoos:function (){
+    selectStock:function () {
+      getRequest("/Stock/listview").then(res =>{
+        this.stocklist=res.data;
+      })
+    },
+    /*selectGoos:function (){
       getRequest("/Goods/select").then(res => {
         console.log(res.data);
         this.goodslist=res.data;
       })
-    },
+    },*/
     selectOutput:function (){
       getRequest("/Output/select").then(res => {
         console.log(res.data);
         this.results=res.data;
       })
     },
-    selectStorage:function (){
+    /*selectStorage:function (){
       getRequest("/Storage/select").then(res => {
         this.storagelist=res.data;
       })
-    },
+    },*/
     selectCustomer:function (){
       getRequest("/Customer/select").then(res => {
         this.customerlist=res.data;
@@ -160,6 +177,22 @@ export default {
         })
       }
     },
+    deleteoutput:function (o_id) {
+      var Output = {
+        o_id:o_id,
+        c_id:0,
+        o_price:0
+      }
+      postRequest("Output/delete",Output).then(res =>{
+        if (res.status==200)
+        {
+          ElMessage({
+            message:res.status+'删除成功',
+            type: 'success',
+          })
+        }
+      })
+    },
     getoutputunit:function (o_id) {
       this.recoderow=o_id;
       var output = {
@@ -171,14 +204,14 @@ export default {
       this.dialogTableVisible=true;
     },
     addoutputunit:function (o_id){
-      if (this.goodsnum<=0)
+      if (this.goodsnum<=0||this.goodsnum>this.stocklist[this.stocklistindex].s_num)
       {
         ElMessage({
           message:'数量不合法',
           type: 'warning',
         })
       }
-      if (this.goodsprice<=0)
+      else if (this.goodsprice<=0)
       {
         ElMessage({
           message:'价格不合法',
@@ -190,8 +223,8 @@ export default {
         var outputunit = {
           o_id:o_id,
           ou_seq:0,
-          s_id:this.storageid,
-          g_id:this.goodsid,
+          s_id:this.stocklist[this.stocklistindex].s_id,
+          g_id:this.stocklist[this.stocklistindex].g_id,
           ou_num:this.goodsnum,
           ou_price:this.goodsnum*this.goodsprice
         };
@@ -203,13 +236,13 @@ export default {
         })
       }
     },
-    deleteoutputunit:function (ou_seq){
+    deleteoutputunit:function (ou_seq,s_id,g_id,ou_num){
       var outputunit = {
         o_id:0,
         ou_seq:ou_seq,
-        s_id:0,
-        g_id:0,
-        ou_num:0,
+        s_id:s_id,
+        g_id:g_id,
+        ou_num:ou_num,
         ou_price:0
       };
       postRequest("Outputunit/delete",outputunit).then(res =>{
@@ -222,9 +255,10 @@ export default {
   },
   created() {
     this.selectOutput();
-    this.selectStorage();
+    //this.selectStorage();
     this.selectCustomer();
-    this.selectGoos();
+    //this.selectGoos();
+    this.selectStock();
   }
 }
 </script>
