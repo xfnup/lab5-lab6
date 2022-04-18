@@ -32,8 +32,18 @@
       <el-table-column property="ou_price" label="总价" />
       <el-table-column label="操作" width="100">
         <template #default="scope">
-          <el-button type="primary" @click="deleteoutputunit(scope.row.ou_seq,scope.row.s_id,scope.row.g_id,scope.row.ou_num)">删除</el-button>
+          <el-button type="primary" @click="deleteoutputunit(scope.row.o_id,scope.row.ou_seq,scope.row.s_id,scope.row.g_id,scope.row.ou_num,scope.row.ou_price)">删除</el-button>
         </template>
+      </el-table-column>
+    </el-table>
+  </el-dialog>
+  <el-dialog v-model="dialogTable2Visible" title="付款明细">
+    <el-table :data="paymessage">
+      <el-table-column property="p_tprice" label="总价" width="200" />
+      <el-table-column property="p_pprice" label="已付"  />
+      <el-table-column property="p_rprice" label="未付" />
+      <el-table-column label="操作" width="100">
+        <el-button type="primary" @click="paytprice()">付款</el-button>
       </el-table-column>
     </el-table>
   </el-dialog>
@@ -56,9 +66,10 @@
           </el-table-column>
           <el-table-column label="客户名称" width="300" prop="c_name">
           </el-table-column>
-          <el-table-column label="操作" width="200">
+          <el-table-column label="操作" width="300">
             <template #default="scope">
               <el-button type="primary" @click="getoutputunit(scope.row.o_id)">销售明细</el-button>
+              <el-button type="primary" @click="pay(scope.row.o_id)">付款明细</el-button>
               <el-button type="primary" @click="deleteoutput(scope.row.o_id)">退货</el-button>
             </template>
           </el-table-column>
@@ -80,6 +91,7 @@ export default {
   },
   data (){
     return{
+      dialogTable2Visible:false,
       dialogTableVisible:false,
       stocklistindex:0,
       customerid:0,
@@ -98,6 +110,9 @@ export default {
           c_name: '客户A',
           c_type: '批发'
         }
+      ],
+      paymessage:[
+
       ],
       outputunitlist:[
         {
@@ -203,6 +218,27 @@ export default {
       })
       this.dialogTableVisible=true;
     },
+    pay:function (o_id) {
+      this.recoderow=o_id;
+      var output = {
+        o_id:o_id,
+      };
+      getRequest("Pay/select",output).then(res =>{
+        this.paymessage=res.data;
+      })
+      this.dialogTable2Visible=true;
+    },
+    paytprice:function () {
+      var output = {
+        o_id:this.recoderow,
+      };
+      getRequest("Pay/pay",output).then(res =>{
+        ElMessage({
+          message:res.message,
+          type: 'success',
+        })
+      })
+    },
     addoutputunit:function (o_id){
       if (this.goodsnum<=0||this.goodsnum>this.stocklist[this.stocklistindex].s_num)
       {
@@ -236,14 +272,14 @@ export default {
         })
       }
     },
-    deleteoutputunit:function (ou_seq,s_id,g_id,ou_num){
+    deleteoutputunit:function (o_id,ou_seq,s_id,g_id,ou_num,ou_price){
       var outputunit = {
-        o_id:0,
+        o_id:o_id,
         ou_seq:ou_seq,
         s_id:s_id,
         g_id:g_id,
         ou_num:ou_num,
-        ou_price:0
+        ou_price:ou_price
       };
       postRequest("Outputunit/delete",outputunit).then(res =>{
         ElMessage({
