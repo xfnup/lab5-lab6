@@ -46,9 +46,10 @@
           </el-table-column>
           <el-table-column label="仓库名称" width="300" prop="s_name">
           </el-table-column>
-          <el-table-column label="操作" width="100">
+          <el-table-column label="操作" width="300">
             <template #default="scope">
               <el-button type="primary" @click="getaccessunit(scope.row.a_id,scope.row.s_id)">进货明细</el-button>
+              <el-button type="primary" @click="deleteaccess(scope.row.a_id)">不进货了</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -155,6 +156,19 @@ export default {
     selectStorage:function (){
       getRequest("/Storage/select").then(res => {
         this.storagelist=res.data;
+      })
+    },
+    deleteaccess:function (a_id) {
+      var Access = {
+        a_id: a_id,
+        m_id: 0,
+        s_id: 0
+      };
+      postRequest("Access/delete",Access).then(res =>{
+        ElMessage({
+          message:res.status+'删除成功',
+          type: 'success',
+        })
       })
     },
     addAccess:function (){

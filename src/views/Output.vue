@@ -54,7 +54,7 @@
     <el-main>
       <el-header height="auto" width="auto">
         <el-select v-model="customerid" placeholder="选择客户">
-          <el-option v-for="(item,index) in customerlist" :key="index" :label="item.c_name" :value="item.c_id">
+          <el-option v-for="(item,index) in customerlist" :key="index" :label="item.c_name+' '+item.c_type" :value="item.c_id">
           </el-option>
         </el-select>
         <el-button type="primary" @click="addOutput">添加销售单</el-button>
@@ -64,7 +64,9 @@
         <el-table :data="results" style="width: fit-content">
           <el-table-column label="编号" width="300" prop="o_id">
           </el-table-column>
-          <el-table-column label="客户名称" width="300" prop="c_name">
+          <el-table-column label="客户名称" width="200" prop="c_name">
+          </el-table-column>
+          <el-table-column label="客户类别" width="200" prop="c_type">
           </el-table-column>
           <el-table-column label="操作" width="300">
             <template #default="scope">

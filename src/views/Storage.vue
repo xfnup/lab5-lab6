@@ -16,6 +16,13 @@
   </el-aside>
   <el-main>
   <el-header height="auto" width="auto">
+    <el-input type="text"
+              v-model="searchname"
+              placeholder="仓库地址"
+              clearable
+              style="width: 300px"
+    />
+    <el-button type="primary" @click="searchStorage">根据地址查询仓库</el-button>
     <el-button type="primary" @click="selectStorage">显示所有仓库</el-button>
   </el-header>
   <el-main>
@@ -62,6 +69,7 @@ export default {
   data (){
     return{
       dialogTableVisible:false,
+      searchname:'',
       Storagename: '',
       Storageaddress:'',
       stock:[
@@ -95,6 +103,18 @@ export default {
         this.stock=res.data;
       })
       this.dialogTableVisible=true;
+    },
+    searchStorage:function () {
+      var Storage={
+        name:this.searchname,
+      }
+      getRequest("Storage/search",Storage).then(res=>{
+        this.results=res.data;
+        ElMessage({
+          message:'查询成功',
+          type: 'success',
+        })
+      })
     },
     deletestock:function (s_id,g_id) {
       var Stock={
