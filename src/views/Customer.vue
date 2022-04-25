@@ -128,6 +128,7 @@ export default {
           message:res.status+'删除成功',
           type: 'success',
         })
+        this.selectCustomer();
       })
     },
     addCustomer:function (){
@@ -152,6 +153,7 @@ export default {
             message:res.status+'添加成功',
             type: 'success',
           })
+          this.selectCustomer();
         })
       }
     }

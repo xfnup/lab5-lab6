@@ -145,12 +145,21 @@ export default {
       };
       postRequest("Storage/delete",Storage).then(res =>{
         console.log(res.message)
+        ElMessage({
+          message:'删除成功',
+          type: 'success',
+        })
+        this.selectStorage();
       })
     },
     addStorage:function (){
-      if (this.Storagename==='')
+      if (this.Storagename===''||this.Storageaddress==='')
       {
         console.log("添加为空");
+        ElMessage({
+          message:'添加为空',
+          type: 'warning',
+        })
       }
       else
       {
@@ -161,6 +170,11 @@ export default {
         };
         postRequest("Storage/add",Storage).then(res =>{
           console.log(res.message)
+          ElMessage({
+            message:'添加成功',
+            type: 'success',
+          })
+          this.selectStorage();
         })
       }
     }

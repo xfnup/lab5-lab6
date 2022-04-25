@@ -178,6 +178,10 @@ export default {
       if (this.customerid===0)
       {
         console.log("添加为空");
+        ElMessage({
+          message:'添加为空',
+          type: 'warning',
+        })
       }
       else
       {
@@ -191,6 +195,7 @@ export default {
             message:res.status+'添加成功',
             type: 'success',
           })
+          this.selectOutput();
         })
       }
     },
@@ -207,6 +212,7 @@ export default {
             message:res.status+'删除成功',
             type: 'success',
           })
+          this.selectOutput();
         }
       })
     },
@@ -239,6 +245,7 @@ export default {
           message:res.message,
           type: 'success',
         })
+        this.pay(this.recoderow);
       })
     },
     addoutputunit:function (o_id){
@@ -271,6 +278,8 @@ export default {
             message:res.status+'添加成功',
             type: 'success',
           })
+          this.getoutputunit(o_id);
+          this.selectStock();
         })
       }
     },
@@ -288,6 +297,8 @@ export default {
           message:res.status+'删除成功',
           type: 'success',
         })
+        this.getoutputunit(o_id);
+        this.selectStock();
       })
     }
   },

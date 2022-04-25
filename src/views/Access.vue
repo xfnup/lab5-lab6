@@ -16,7 +16,7 @@
       <el-table-column property="au_num" label="商品数量" />
       <el-table-column label="操作" width="100">
         <template #default="scope">
-          <el-button type="primary" @click="deleteaccessunit(scope.row.au_seq)">删除</el-button>
+          <el-button type="primary" @click="deleteaccessunit(scope.row.au_seq,scope.row.au_num,scope.row.a_id,scope.row.g_id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -169,12 +169,17 @@ export default {
           message:res.status+'删除成功',
           type: 'success',
         })
+        this.selectAccess();
       })
     },
     addAccess:function (){
       if (this.merchantid===0||this.storageid===0)
       {
         console.log("添加为空");
+        ElMessage({
+          message:'添加为空',
+          type: 'warning',
+        })
       }
       else
       {
@@ -188,6 +193,7 @@ export default {
             message:res.status+'添加成功',
             type: 'success',
           })
+          this.selectAccess();
         })
       }
     },
@@ -227,15 +233,16 @@ export default {
             message:res.status+'添加成功',
             type: 'success',
           })
+          this.getaccessunit(a_id,s_id);
         })
       }
     },
-    deleteaccessunit:function (au_seq){
+    deleteaccessunit:function (au_seq,au_num,a_id,g_id){
       var Accessunit = {
-        a_id:0,
+        a_id:a_id,
         au_seq:au_seq,
-        g_id:0,
-        au_num:0,
+        g_id:g_id,
+        au_num:au_num,
         au_price:0
       };
       postRequest("Accessunit/delete",Accessunit).then(res =>{
