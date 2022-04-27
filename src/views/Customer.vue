@@ -1,4 +1,11 @@
 <template>
+  <el-dialog v-model="dialogTableVisible" title="付款统计">
+    <el-table :data="payview">
+      <el-table-column property="p_tprice" label="总价" width="200" />
+      <el-table-column property="p_pprice" label="已付"  />
+      <el-table-column property="p_rprice" label="未付" />
+    </el-table>
+  </el-dialog>
   <el-container>
   <el-aside width="200px">
     <common-aside></common-aside>
@@ -37,8 +44,9 @@
       </el-table-column>
       <el-table-column label="类别" width="300" prop="c_type">
       </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="200">
         <template #default="scope">
+          <el-button type="primary" @click="selectpayview(scope.row.c_id)">付款统计</el-button>
           <el-button type="primary" @click="deleteCustomer(scope.row.c_id)">删除</el-button>
         </template>
       </el-table-column>
@@ -59,6 +67,7 @@ export default {
   },
   data (){
     return{
+      dialogTableVisible:false,
       searchname:'',
       Customername: '',
       Customertype:'',
@@ -82,6 +91,7 @@ export default {
           c_type: '零售',
         }
       ],
+      payview:[],
       results: [
         {
           c_id: 2,
@@ -101,6 +111,19 @@ export default {
       getRequest("/Customer/select").then(res => {
         console.log(res.data);
         this.results=res.data;
+      })
+    },
+    selectpayview:function (c_id) {
+      var id={
+        c_id:c_id,
+      };
+      getRequest("/Pay/selectbycid",id).then(res=>{
+        this.payview=res.data;
+        ElMessage({
+          message:'查询成功',
+          type: 'success',
+        })
+        this.dialogTableVisible=true;
       })
     },
     searchCustomer:function () {
